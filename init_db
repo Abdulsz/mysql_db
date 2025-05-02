@@ -1,0 +1,216 @@
+
+import sqlite3
+from datetime import datetime
+
+connection = sqlite3.connect('database.db')
+
+with open('schema.sql') as f:
+    connection.executescript(f.read())
+
+cur = connection.cursor()
+
+# Insert Artists - Expanded with more details and higher listener counts for variety
+artists = [
+    ('Avicii', 'Sweden', 'EDM', 45000000, 2008, 'Swedish DJ and producer Tim Bergling, known professionally as Avicii, revolutionized electronic dance music with his melodic approach. His breakthrough came with "Levels" in 2011, followed by hits like "Wake Me Up" and "Hey Brother."'),
+    ('Adele', 'UK', 'Pop', 58000000, 2006, 'English singer-songwriter known for her powerful vocals and emotional ballads. Her albums 19, 21, 25, and 30 have broken numerous sales records worldwide.'),
+    ('Coldplay', 'UK', 'Alternative Rock', 61000000, 1996, 'British rock band formed in London consisting of Chris Martin, Jonny Buckland, Guy Berryman, and Will Champion. Known for their evolving sound across albums from alternative rock to more experimental pop.'),
+    ('Billie Eilish', 'USA', 'Pop', 73000000, 2015, 'American singer and songwriter who gained popularity with her debut single "Ocean Eyes." Known for her whispery vocals, innovative production, and distinctive fashion sense.'),
+    ('The Weeknd', 'Canada', 'R&B', 82000000, 2010, 'Canadian singer, songwriter, and record producer Abel Tesfaye rose to fame with his mixtapes before achieving mainstream success with albums like "Beauty Behind the Madness" and "After Hours."'),
+    ('Taylor Swift', 'USA', 'Pop', 94000000, 2006, 'American singer-songwriter who began as a country artist before transitioning to pop. Known for narrative songs about her personal life and has won numerous awards including multiple Grammys.'),
+    ('Drake', 'Canada', 'Hip-Hop', 88000000, 2006, 'Canadian rapper, singer, and actor who gained recognition for his role on Degrassi before launching a successful music career. Known for blending singing with rapping.'),
+    ('Dua Lipa', 'UK', 'Pop', 66000000, 2014, 'English singer and songwriter who rose to prominence with her hit "New Rules." Known for her disco-influenced pop sound and distinctive voice.'),
+    ('Ed Sheeran', 'UK', 'Pop', 78000000, 2004, 'English singer-songwriter and musician known for his blend of acoustic pop, folk, and hip-hop. Has sold more than 150 million records worldwide.'),
+    ('Ariana Grande', 'USA', 'Pop', 71000000, 2008, 'American singer and actress who began her career in Broadway productions before transitioning to television and then music. Known for her wide vocal range and pop/R&B sound.')
+]
+
+for artist in artists:
+    cur.execute("INSERT INTO Artist (name, country_of_origin, genre, monthly_listeners, founding_year, Biography) VALUES (?, ?, ?, ?, ?, ?)", artist)
+
+# Dictionary to store artist_id mapping
+artist_ids = {}
+for i, artist in enumerate(artists, 1):
+    artist_ids[artist[0]] = i
+
+# Insert Albums with more variety and details
+albums = [
+    # Avicii Albums
+    ('True', 10, 28000000, 40, artist_ids['Avicii'], '2013-09-13', 'Studio'),
+    ('Stories', 14, 19000000, 54, artist_ids['Avicii'], '2015-10-02', 'Studio'),
+    ('TIM', 12, 24000000, 42, artist_ids['Avicii'], '2019-06-06', 'Posthumous'),
+    
+    # Adele Albums
+    ('19', 12, 15000000, 43, artist_ids['Adele'], '2008-01-28', 'Studio'),
+    ('21', 11, 45000000, 48, artist_ids['Adele'], '2011-01-24', 'Studio'),
+    ('25', 11, 42000000, 48, artist_ids['Adele'], '2015-11-20', 'Studio'),
+    ('30', 12, 36000000, 58, artist_ids['Adele'], '2021-11-19', 'Studio'),
+    
+    # Coldplay Albums - Selected Key Albums
+    ('Parachutes', 10, 18000000, 42, artist_ids['Coldplay'], '2000-07-10', 'Studio'),
+    ('A Rush of Blood to the Head', 11, 22000000, 54, artist_ids['Coldplay'], '2002-08-26', 'Studio'),
+    ('Viva la Vida', 10, 25000000, 46, artist_ids['Coldplay'], '2008-06-12', 'Studio'),
+    ('Ghost Stories', 9, 17000000, 42, artist_ids['Coldplay'], '2014-05-16', 'Studio'),
+    ('Music of the Spheres', 12, 21000000, 43, artist_ids['Coldplay'], '2021-10-15', 'Studio'),
+    
+    ('Red', 16, 26000000, 65, artist_ids['Taylor Swift'], '2012-10-22', 'Studio'),
+    ('1989', 13, 34000000, 48, artist_ids['Taylor Swift'], '2014-10-27', 'Studio'),
+    ('Reputation', 15, 30000000, 55, artist_ids['Taylor Swift'], '2017-11-10', 'Studio'),
+    ('Lover', 18, 28000000, 61, artist_ids['Taylor Swift'], '2019-08-23', 'Studio'),
+    ('Folklore', 16, 32000000, 63, artist_ids['Taylor Swift'], '2020-07-24', 'Studio'),
+    ('Evermore', 15, 27000000, 60, artist_ids['Taylor Swift'], '2020-12-11', 'Studio'),
+    ('Midnights', 13, 40000000, 44, artist_ids['Taylor Swift'], '2022-10-21', 'Studio'),
+    
+    # Drake Albums
+    ('Thank Me Later', 14, 15000000, 65, artist_ids['Drake'], '2010-06-15', 'Studio'),
+    ('Take Care', 18, 24000000, 80, artist_ids['Drake'], '2011-11-15', 'Studio'),
+    ('Nothing Was the Same', 13, 22000000, 60, artist_ids['Drake'], '2013-09-24', 'Studio'),
+    ('Views', 20, 31000000, 82, artist_ids['Drake'], '2016-04-29', 'Studio'),
+    ('Scorpion', 25, 36000000, 90, artist_ids['Drake'], '2018-06-29', 'Studio'),
+    ('Certified Lover Boy', 21, 28000000, 86, artist_ids['Drake'], '2021-09-03', 'Studio'),
+    ('Honestly, Nevermind', 14, 23000000, 52, artist_ids['Drake'], '2022-06-17', 'Studio'),
+    
+    # Dua Lipa Albums
+    ('Dua Lipa', 12, 18000000, 44, artist_ids['Dua Lipa'], '2017-06-02', 'Studio'),
+    ('Future Nostalgia', 11, 42000000, 43, artist_ids['Dua Lipa'], '2020-03-27', 'Studio'),
+    ('Radical Optimism', 11, 26000000, 41, artist_ids['Dua Lipa'], '2024-05-03', 'Studio'),
+    
+    # Ed Sheeran Albums
+    ('+', 12, 16000000, 50, artist_ids['Ed Sheeran'], '2011-09-09', 'Studio'),
+    ('x', 12, 28000000, 50, artist_ids['Ed Sheeran'], '2014-06-20', 'Studio'),
+    ('÷', 16, 35000000, 60, artist_ids['Ed Sheeran'], '2017-03-03', 'Studio'),
+    ('No.6 Collaborations Project', 15, 22000000, 50, artist_ids['Ed Sheeran'], '2019-07-12', 'Collaborative'),
+    ('=', 14, 24000000, 48, artist_ids['Ed Sheeran'], '2021-10-29', 'Studio'),
+    ('-', 14, 20000000, 49, artist_ids['Ed Sheeran'], '2023-05-05', 'Studio'),
+    
+    # Ariana Grande Albums
+    ('Yours Truly', 12, 10000000, 47, artist_ids['Ariana Grande'], '2013-08-30', 'Studio'),
+    ('My Everything', 12, 14000000, 45, artist_ids['Ariana Grande'], '2014-08-22', 'Studio'),
+    ('Dangerous Woman', 15, 18000000, 55, artist_ids['Ariana Grande'], '2016-05-20', 'Studio'),
+    ('Sweetener', 15, 22000000, 47, artist_ids['Ariana Grande'], '2018-08-17', 'Studio'),
+    ('Thank U, Next', 12, 30000000, 41, artist_ids['Ariana Grande'], '2019-02-08', 'Studio'),
+    ('Positions', 14, 24000000, 44, artist_ids['Ariana Grande'], '2020-10-30', 'Studio'),
+    ('Eternal Sunshine', 13, 26000000, 42, artist_ids['Ariana Grande'], '2024-03-08', 'Studio')
+]
+
+for i, album in enumerate(albums, 1):
+    cur.execute("INSERT INTO Album (name, num_songs, num_plays, duration, artist_id, release_date, album_type) VALUES (?, ?, ?, ?, ?, ?, ?)", album)
+
+
+songs = [
+    # Avicii - True (album_id 1)
+    (1, "Wake Me Up", 1680000, 245, 1, 1, "EDM", "2013-06-17", "Aloe Blacc"),
+    (2, "Hey Brother", 950000, 255, 1, 1, "EDM", "2013-10-09", "Dan Tyminski"),
+    
+    # Avicii - Stories (album_id 2)
+    (3, "Waiting For Love", 780000, 230, 1, 2, "EDM", "2015-05-22", "Simon Aldred"),
+    (4, "For A Better Day", 205000, 209, 1, 2, "EDM", "2015-08-28", "Alex Ebert"),
+    
+    # Avicii - TIM (album_id 3)
+    (5, "SOS", 520000, 178, 1, 3, "EDM", "2019-04-10", "Aloe Blacc"),
+    (6, "Heaven", 320000, 243, 1, 3, "EDM", "2019-06-06", "Chris Martin"),
+    
+    # Adele - 19 (album_id 4)
+    (7, "Make You Feel My Love", 520000, 214, 2, 4, "Pop", "2008-10-27", ""),
+    (8, "Chasing Pavements", 480000, 213, 2, 4, "Pop", "2008-01-14", ""),
+    
+    # Adele - 21 (album_id 5)
+    (9, "Someone Like You", 2150000, 285, 2, 5, "Pop", "2011-01-24", ""),
+    (10, "Rolling in the Deep", 1950000, 228, 2, 5, "Pop", "2010-11-29", ""),
+    
+    # Adele - 25 (album_id 6)
+    (11, "Hello", 2890000, 295, 2, 6, "Pop", "2015-10-23", ""),
+    (12, "Send My Love (To Your New Lover)", 980000, 223, 2, 6, "Pop", "2016-05-16", ""),
+    
+    # Coldplay - Parachutes (album_id 8)
+    (13, "Yellow", 1200000, 255, 3, 8, "Alternative Rock", "2000-07-10", ""),
+    (14, "Trouble", 450000, 270, 3, 8, "Alternative Rock", "2000-07-10", ""),
+    
+    # Coldplay - A Rush of Blood to the Head (album_id 9)
+    (15, "The Scientist", 1400000, 310, 3, 9, "Alternative Rock", "2002-08-26", ""),
+    (16, "Clocks", 1300000, 308, 3, 9, "Alternative Rock", "2002-08-26", ""),
+    
+    # Coldplay - Viva la Vida (album_id 10)
+    (17, "Viva la Vida", 1600000, 242, 3, 10, "Alternative Rock", "2008-05-25", ""),
+    (18, "Violet Hill", 520000, 222, 3, 10, "Alternative Rock", "2008-04-29", ""),
+    
+    # Billie Eilish - When We All Fall Asleep, Where Do We Go? (album_id hypothetical)
+    (19, "Bad Guy", 2100000, 194, 4, 36, "Pop", "2019-03-29", ""),
+    (20, "Bury a Friend", 980000, 193, 4, 36, "Pop", "2019-01-30", ""),
+    
+    # Billie Eilish - Happier Than Ever (album_id hypothetical)
+    (21, "Happier Than Ever", 1100000, 298, 4, 37, "Pop", "2021-07-30", ""),
+    (22, "Therefore I Am", 920000, 174, 4, 37, "Pop", "2020-11-12", ""),
+    
+    # The Weeknd - Beauty Behind the Madness (album_id hypothetical)
+    (23, "The Hills", 1950000, 242, 5, 38, "R&B", "2015-05-27", ""),
+    (24, "Can't Feel My Face", 1850000, 213, 5, 38, "R&B", "2015-06-08", ""),
+    
+    # The Weeknd - After Hours (album_id hypothetical)
+    (25, "Blinding Lights", 3200000, 200, 5, 39, "R&B", "2019-11-29", ""),
+    (26, "Save Your Tears", 1800000, 215, 5, 39, "R&B", "2020-08-09", ""),
+    
+    # Taylor Swift - 1989 (album_id 15)
+    (27, "Blank Space", 1800000, 231, 6, 15, "Pop", "2014-11-10", ""),
+    (28, "Shake It Off", 1750000, 219, 6, 15, "Pop", "2014-08-18", ""),
+    
+    # Taylor Swift - Folklore (album_id 19)
+    (29, "Cardigan", 980000, 239, 6, 19, "Alternative", "2020-07-27", ""),
+    (30, "The 1", 720000, 210, 6, 19, "Alternative", "2020-07-24", ""),
+    
+    # Taylor Swift - Midnights (album_id 21)
+    (31, "Anti-Hero", 1450000, 200, 6, 21, "Pop", "2022-10-21", ""),
+    (32, "Lavender Haze", 920000, 202, 6, 21, "Pop", "2022-10-21", ""),
+    
+    # Drake - Take Care (album_id 23)
+    (33, "Take Care", 1400000, 277, 7, 23, "Hip-Hop", "2012-02-21", "Rihanna"),
+    (34, "Headlines", 1100000, 236, 7, 23, "Hip-Hop", "2011-08-09", ""),
+    
+    # Drake - Views (album_id 26)
+    (35, "Hotline Bling", 2100000, 267, 7, 26, "Hip-Hop", "2015-07-31", ""),
+    (36, "One Dance", 2050000, 173, 7, 26, "Hip-Hop", "2016-04-05", "Wizkid, Kyla"),
+    
+    # Drake - Scorpion (album_id 27)
+    (37, "God's Plan", 2200000, 198, 7, 27, "Hip-Hop", "2018-01-19", ""),
+    (38, "In My Feelings", 1900000, 217, 7, 27, "Hip-Hop", "2018-07-10", ""),
+    
+    # Dua Lipa - Dua Lipa (album_id 30)
+    (39, "New Rules", 2400000, 209, 8, 30, "Pop", "2017-07-07", ""),
+    (40, "IDGAF", 1100000, 217, 8, 30, "Pop", "2018-01-12", ""),
+    
+    # Dua Lipa - Future Nostalgia (album_id 31)
+    (41, "Don't Start Now", 2350000, 183, 8, 31, "Pop", "2019-10-31", ""),
+    (42, "Levitating", 2300000, 203, 8, 31, "Pop", "2020-10-01", ""),
+    
+    # Dua Lipa - Radical Optimism (album_id 32)
+    (43, "Houdini", 980000, 193, 8, 32, "Pop", "2023-11-10", ""),
+    (44, "Training Season", 620000, 187, 8, 32, "Pop", "2024-02-15", ""),
+    
+    # Ed Sheeran - + (album_id 33)
+    (45, "The A Team", 1200000, 258, 9, 33, "Pop", "2011-06-12", ""),
+    (46, "Lego House", 780000, 185, 9, 33, "Pop", "2011-11-11", ""),
+    
+    # Ed Sheeran - x (album_id 34)
+    (47, "Thinking Out Loud", 2300000, 281, 9, 34, "Pop", "2014-09-24", ""),
+    (48, "Photograph", 1950000, 258, 9, 34, "Pop", "2015-05-10", ""),
+    
+    # Ed Sheeran - ÷ (album_id 35)
+    (49, "Shape of You", 3300000, 233, 9, 35, "Pop", "2017-01-06", ""),
+    (50, "Perfect", 2450000, 263, 9, 35, "Pop", "2017-09-26", ""),
+    
+    # Ariana Grande - Thank U, Next (album_id 42)
+    (51, "Thank U, Next", 2200000, 207, 10, 42, "Pop", "2018-11-03", ""),
+    (52, "7 Rings", 2150000, 178, 10, 42, "Pop", "2019-01-18", ""),
+    
+    # Ariana Grande - Positions (album_id 43)
+    (53, "Positions", 1400000, 172, 10, 43, "Pop", "2020-10-23", ""),
+    (54, "34+35", 1250000, 173, 10, 43, "Pop", "2020-10-30", ""),
+    
+    # Ariana Grande - Eternal Sunshine (album_id 44)
+    (55, "Yes, And?", 880000, 208, 10, 44, "Pop", "2024-01-12", ""),
+    (56, "We Can't Be Friends", 720000, 197, 10, 44, "Pop", "2024-03-08", "")
+]
+
+cur.executemany("INSERT INTO Song VALUES (?,?,?,?,?,?,?,?,?)", songs)
+
+
+connection.commit()
+connection.close()

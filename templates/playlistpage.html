@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  
+  <body class="bg-gray-100 min-h-screen flex flex-col p-6">
+    <nav class="bg-blue-500 p-4 mb-8 rounded-lg shadow-md w-full">
+      <div class="container mx-auto flex justify-between items-center">
+        <a href="{{ url_for('home_page') }}" class="text-white font-bold text-lg">Home</a>
+        <a href="{{ url_for('index') }}" class="text-white font-bold text-lg">Music</a>
+      </div>
+    </nav>
+    {% block content %}
+
+    <div class="container mx-auto">
+      <div class="flex justify-between items-center mb-8">
+        <h1 class="text-4xl font-bold text-blue-700">{% block title %} Your Playlists {% endblock %}</h1>
+        <button id="openModal" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Create Playlist
+        </button>
+      </div>
+
+
+      <div id="myModal" class="modal hidden fixed z-10 left-0 top-0 w-full h-full overflow-auto bg-black bg-opacity-40">
+        <div class="modal-content bg-white mx-auto my-15 p-6 border rounded-md max-w-md">
+          <span class="close text-gray-600 float-right text-2xl cursor-pointer">&times;</span>
+          <h2 class="text-2xl mb-4">Create New Playlist</h2>
+          <form action="{{ url_for('create_playlist') }}" method="POST">
+            <div class="mb-4">
+              <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Name:</label>
+              <input type="text" name="name" id="name" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <div class="mb-6">
+              <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
+              <textarea name="description" id="description" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+            </div>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+              Create
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <script>
+        // Open Modal
+        const modal = document.getElementById('myModal');
+        const openModal = document.getElementById('openModal');
+        openModal.addEventListener('click', () => modal.classList.remove('hidden'));
+        // Close Modal
+        const closeModal = document.getElementsByClassName('close')[0];
+        closeModal.addEventListener('click', () => modal.classList.add('hidden'));
+      </script>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
+        {% for playlist in playlists %}
+        <div class="bg-white rounded-lg shadow-md p-4">
+          <h3 class="text-lg font-semibold text-gray-800">{{ playlist['name'] }}</h3>
+          <p class="text-sm text-gray-600 mt-1">{{ playlist['description'] }}</p>
+          <div class="mt-4 flex justify-end">
+            <form action="{{ url_for('delete_playlist') }}" method="POST" class="inline-block">
+                <input type="hidden" name="playlist_id" value="{{ playlist['playlist_id'] }}">
+                <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                  Delete
+                </button>
+            </form>
+          </div>
+        </div>
+        {% else %}
+        <p class="text-gray-500">No playlists available.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+      
+    {% endblock %} 
+  </body>
+</html>
+  
