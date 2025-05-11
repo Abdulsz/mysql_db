@@ -121,18 +121,35 @@ def get_playlist_songs(playlist_id):
     conn.close()
     return songs
 
+
+@app.route("/search_music", methods=['GET', 'POST'])
+def search_music():
+    conn = get_db_connection()
+    user_input = request.form['search']
+    song_search = conn.execute('''
+        SELECT 
+            song_name,
+            artist_name,
+            duration,
+            genre
+        FROM Music
+        WHERE song_name LIKE ? OR artist_name LIKE ?''', ('%' + user_input + '%', '%' + user_input + '%',)).fetchall()
+    
+    conn.close()
+    print(song_search if song_search else "No music found")
+    return render_template('index.html', music=song_search);
+    
+
 @app.route("/index")
 def index():  
     conn = get_db_connection()
     music = conn.execute('''
         SELECT 
-            Song.name AS song_name,
-        Artist.name AS artist_name,
-        Song.duration as duration,
-        Song.genre as genre
-    FROM Song
-    JOIN Artist ON Song.artist_id = Artist.artist_id
-    JOIN Album ON Song.album_id = Album.album_id;
+            song_name,
+            artist_name,
+            duration,
+            genre
+        FROM Music;
 ''').fetchall()
     
     conn.close()

@@ -24,7 +24,11 @@ artists = [
 ]
 
 for artist in artists:
-    cur.execute("INSERT INTO Artist (name, country_of_origin, genre, monthly_listeners, founding_year, Biography) VALUES (?, ?, ?, ?, ?, ?)", artist)
+    cur.execute("""
+        INSERT INTO Artist (name, country_of_origin, genre, monthly_listeners, founding_year, Biography, image_url)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, artist)
+
 
 # Dictionary to store artist_id mapping
 artist_ids = {}

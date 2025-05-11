@@ -17,12 +17,16 @@
   {% block content %}
   
     <h1 class="text-4xl font-bold text-blue-700 mb-8">{% block title %} Music App {% endblock %}</h1>
-    
-    <form method="post"> 
-      <input type="text" name="name" placeholder="Playlist Name" class="...">
-      <textarea name="description" placeholder="Description" class="..."></textarea>
-      <button type="submit" class="...">Create Playlist</button>
+    <form action="{{ url_for('search_music') }}" method="post">
+      <input 
+        type="text" 
+        name="search" 
+        id = "search"
+        placeholder="Search songs or artists..." 
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+      >
     </form>
+  
         
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
       {% for m in music %}
