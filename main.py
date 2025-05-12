@@ -1,7 +1,7 @@
 import os
 from datetime import date
 import sqlite3
-from flask import Flask, render_template, request, url_for, flash, redirect, session
+from flask import Flask, render_template, request, url_for, flash, redirect, session, jsonify
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your secret key'
@@ -180,6 +180,37 @@ def home_page():
     conn.close()
 
     return render_template('home.html', artists=artists, songs=songs, albums=albums)
+
+
+
+@app.route("/artist_analytics_data")
+def artist_analytics_data():
+ conn = get_db_connection()
+ analytics = conn.execute('SELECT * FROM ArtistAnalytics').fetchall()
+ conn.close()
+    # Convert Row objects to dictionaries for JSON serialization
+ analytics_list = [dict(row) for row in analytics]
+ return jsonify(analytics_list)
+
+@app.route("/genre_analytics_data")
+def genre_analytics_data():
+ conn = get_db_connection()
+ genres = conn.execute('SELECT * FROM GenreAnalytics').fetchall()
+ conn.close()
+    # Convert Row objects to dictionaries for JSON serialization
+ genres_list = [dict(row) for row in genres]
+ return jsonify(genres_list)
+
+@app.route("/album_performance_data")
+def album_performance_data():
+ conn = get_db_connection()
+ albums = conn.execute('SELECT * FROM AlbumPerformance').fetchall()
+ conn.close()
+    # Convert Row objects to dictionaries for JSON serialization
+ albums_list = [dict(row) for row in albums]
+ return jsonify(albums_list)
+
+
 
 
 

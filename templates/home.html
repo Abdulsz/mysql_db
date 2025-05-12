@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <title>Music App</title>
 
@@ -92,6 +93,47 @@
           {% endfor %}
         </div>
       </section>
+
+      <!-- Analytics Section -->
+      <section>
+        <h2 class="text-2xl font-semibold mb-4">Analytics</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+          <!-- Genre Analytics Pie Chart -->
+          <div class="bg-white rounded shadow p-6">
+            <h3 class="text-xl font-bold mb-4">Genre Popularity</h3>
+            <canvas id="genrePlaysChart"></canvas>
+          </div>
+
+          <!-- Artist Analytics Pie Chart -->
+          <div class="bg-white rounded shadow p-6">
+            <h3 class="text-xl font-bold mb-4">Artist Total Plays</h3>
+            <canvas id="artistPlaysChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Album Performance Table -->
+        <div class="bg-white rounded shadow p-6">
+          <h3 class="text-xl font-bold mb-4">Album Performance</h3>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Album</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Artist</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Release Date</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tracks</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Plays</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg Plays/Track</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Duration (sec)</th>
+                </tr>
+              </thead>
+              <tbody id="albumPerformanceBody" class="bg-white divide-y divide-gray-200">
+                <!-- Album performance data will be loaded here by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
     </main>
 
     <!-- Right Sidebar (Now Playing Only One Song) -->
@@ -132,5 +174,97 @@
 </footer>
 
   </div>
+
+  <script>
+    // Function to fetch data and render charts/tables
+    async function loadAnalytics() {
+      // Fetch Genre Analytics
+      const genreResponse = await fetch('/genre_analytics_data');
+      const genreData = await genreResponse.json();
+      renderGenreChart(genreData.data);
+
+      // Fetch Artist Analytics
+      const artistResponse = await fetch('/artist_analytics_data');
+      const artistData = await artistResponse.json();
+      renderArtistChart(artistData.data);
+
+      // Fetch Album Performance
+      const albumResponse = await fetch('/album_performance_data');
+      const albumData = await albumResponse.json();
+      renderAlbumTable(albumData.data);
+    }
+
+    function renderGenreChart(genres) {
+      const ctx = document.getElementById('genrePlaysChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: genres.map(g => g.genre || 'Unknown'),
+          datasets: [{
+            data: genres.map(g => g.total_plays),
+            backgroundColor: [
+              '#4F46E5', '#8B5CF6', '#EAB308', '#10B981', '#EF4444',
+              '#F97316', '#6B7280', '#3B82F6', '#EC4899', '#A855F7'
+            ],
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Total Plays by Genre'
+            }
+          }
+        }
+      });
+    }
+
+    function renderArtistChart(artists) {
+      const ctx = document.getElementById('artistPlaysChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: artists.map(a => a.artist_name),
+          datasets: [{
+            data: artists.map(a => a.total_plays),
+            backgroundColor: [
+               '#3B82F6', '#EC4899', '#A855F7', '#F87171', '#FACC15',
+              '#34D399', '#22D3EE', '#E879F9', '#A78BFA', '#F0AB0A'
+            ],
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Total Plays by Artist'
+            }
+          }
+        }
+      });
+    }
+
+    function renderAlbumTable(albums) {
+      const tbody = document.getElementById('albumPerformanceBody');
+      tbody.innerHTML = ''; // Clear existing rows
+      albums.forEach(album => {
+        const row = `<tr><td class="px-6 py-4 whitespace-nowrap">${album.album_name}</td><td class="px-6 py-4 whitespace-nowrap">${album.artist_name}</td><td class="px-6 py-4 whitespace-nowrap">${album.release_date}</td><td class="px-6 py-4 whitespace-nowrap">${album.track_count}</td><td class="px-6 py-4 whitespace-nowrap">${album.total_plays}</td><td class="px-6 py-4 whitespace-nowrap">${album.avg_plays_per_track.toFixed(2)}</td><td class="px-6 py-4 whitespace-nowrap">${album.total_duration}</td></tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+
+    // Load analytics when the page is ready
+    document.addEventListener('DOMContentLoaded', loadAnalytics);
+  </script>
 </body>
 </html>
