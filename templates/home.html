@@ -181,17 +181,17 @@
       // Fetch Genre Analytics
       const genreResponse = await fetch('/genre_analytics_data');
       const genreData = await genreResponse.json();
-      renderGenreChart(genreData.data);
+      renderGenreChart(genreData);
 
       // Fetch Artist Analytics
       const artistResponse = await fetch('/artist_analytics_data');
       const artistData = await artistResponse.json();
-      renderArtistChart(artistData.data);
+      renderArtistChart(artistData);
 
       // Fetch Album Performance
       const albumResponse = await fetch('/album_performance_data');
       const albumData = await albumResponse.json();
-      renderAlbumTable(albumData.data);
+      renderAlbumTable(albumData);
     }
 
     function renderGenreChart(genres) {

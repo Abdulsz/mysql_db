@@ -25,8 +25,8 @@ artists = [
 
 for artist in artists:
     cur.execute("""
-        INSERT INTO Artist (name, country_of_origin, genre, monthly_listeners, founding_year, Biography, image_url)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO Artist (name, country_of_origin, genre, monthly_listeners, founding_year, Biography)
+        VALUES (?, ?, ?, ?, ?, ?)
     """, artist)
 
 

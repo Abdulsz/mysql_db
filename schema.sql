@@ -11,8 +11,7 @@ CREATE TABLE Artist (
     genre TEXT,
     monthly_listeners INTEGER,
     founding_year INTEGER,
-    Biography TEXT,
-    image_url TEXT
+    Biography TEXT
 );
 
 CREATE TABLE Album (
@@ -24,7 +23,6 @@ CREATE TABLE Album (
     artist_id INTEGER,
     release_date DATE,
     album_type TEXT,
-    image_url TEXT,
     FOREIGN KEY (artist_id) REFERENCES Artist(artist_id)
 );
 
@@ -53,7 +51,6 @@ CREATE TABLE Song (
     genre TEXT,
     release_date DATE,
     feature_artists TEXT,
-    image_url TEXT,
     FOREIGN KEY (artist_id) REFERENCES Artist(artist_id),
     FOREIGN KEY (album_id) REFERENCES Album(album_id)
 );
